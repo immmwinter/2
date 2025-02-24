@@ -5,9 +5,10 @@ using namespace std;
 
 class Button {
 public:
-    Button() {}
+    Button() : visible(true) {} // ปุ่มเริ่มต้นมองเห็น
 
-    Button(string t, sf::Vector2f size, int charSize, sf::Color bgColor, sf::Color textColor) {
+    Button(string t, sf::Vector2f size, int charSize, sf::Color bgColor, sf::Color textColor)
+        : visible(true) { // ปุ่มมองเห็นเริ่มต้น
         text.setString(t);
         text.setFillColor(textColor);
         text.setCharacterSize(charSize);
@@ -18,7 +19,7 @@ public:
         button.setOutlineColor(sf::Color::Black);
     }
 
-    void setfont(sf::Font& font) {
+    void setFont(sf::Font& font) {
         text.setFont(font);
     }
 
@@ -39,19 +40,26 @@ public:
         text.setString(t);
     }
 
+    void hide() { visible = false; } // ซ่อนปุ่ม
+    void show() { visible = true; }  // แสดงปุ่ม
+    bool isVisible() { return visible; } // ตรวจสอบปุ่ม
+
     void drawTo(sf::RenderWindow& window) {
-        window.draw(button);
-        window.draw(text);
+        if (visible) { // วาดเฉพาะเมื่อปุ่มมองเห็น
+            window.draw(button);
+            window.draw(text);
+        }
     }
 
     bool isMouseOver(sf::RenderWindow& window) {
+        if (!visible) return false; // ถ้าปุ่มซ่อน ให้เมาส์ไม่ทำงานกับปุ่ม
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         sf::FloatRect btnBounds = button.getGlobalBounds();
-
         return btnBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
     }
 
 private:
     sf::RectangleShape button;
     sf::Text text;
+    bool visible; // ตัวแปรสถานะว่าปุ่มถูกซ่อนหรือไม่
 };
